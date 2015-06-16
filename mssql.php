@@ -36,7 +36,9 @@ class SQL{
 	}
 
 	function get_checked($input){
-		$sql = "select top 10 ".$input." from CubeStaging.dbo.TransactionHistory";
+		ini_set('max_execution_time', 300);
+		$sql = "select top 1000".$input." from CubeStaging.dbo.TransactionHistory";
+			//group by ".$input;
 		$query = sqlsrv_query($this->conn, $sql);
 		$i = 1;
 		$str = explode(",", $input);
