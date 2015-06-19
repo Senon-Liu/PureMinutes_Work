@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Pivot Grid - jQuery EasyUI</title>
+		<script type="text/javascript" src="../../jquery.min.js"></script>
+	<!-- Import from other page -->
+	<script type"text/javacript">
+		$(document).ready(function(){
+		
+
+		
+		$('#submit').click(function(){
+			var check_data = new Array();
+			$('input[name="checkbox"]:checked').each(function(){
+				check_data.push($(this).val());
+			})
+			alert(check_data);
+			//generate table's head
+			var jsonString = JSON.stringify(check_data);
+			//alert(jsonString);
+			$.ajax({
+				type: "post",
+				url: "check_test.php",
+				dataType: "json",
+				data: {data:jsonString},
+				success: function(data){
+					//alert(data.length);
+					var val = "";
+					$.each(data,function(i,n){
+					//val += n;
+					//val += n["TransDate"]+"---"+n["TransSource"]+"<br>";
+					val += n["id"]+"---";
+					 for(var k = 0; k < check_data.length; k++){
+					 	var temp = check_data[k];
+					 	val += n[temp]+" ";
+					 }
+
+					 val += "<br>";
+
+
+					});
+			
+					$('#check_get').html(val);
+				
+					
+				},
+				error: function(){
+					alert("error");
+				}
+
+
+			});
+		});
+
+	});
+	</script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<!-- Import finish-->
+
+
+
+
+
+
+
+
+	<link rel="stylesheet" type="text/css" href="../../themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../../themes/icon.css">
+
+	<script type="text/javascript" src="../../jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="jquery.pivotgrid.js"></script>
+</head>
+<body>
+
+
+
+<div class="row">
+      <div class="col-md-8" id="left-side">
+      	<h1>left side</h1>
+      	<h2>Pivot Grid</h2>
+	<div style="margin-bottom:10px">
+		<a href="javascript:void(0)" class="easyui-menubutton" style="width:70px;height:78px;" data-options="size:'large',iconCls:'icon-load',iconAlign:'top',plain:false,menu:'#mm'">Load</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" style="width:70px;height:78px;" data-options="size:'large',iconCls:'icon-layout',iconAlign:'top',plain:false" onclick="javascript:$('#pg').pivotgrid('layout')">Layout</a>
+	</div>
+	<div id="mm" style="display:none">
+		<div onclick="load1()">Load Data1</div>
+		<div onclick="load3()">Load Data3</div>
+	</div>
+	<table id="pg" style="width:700px;height:300px"></table>
+	<style type="text/css">
+		.icon-load{
+			background:url('load.png') no-repeat center center;
+		}
+		.icon-layout{
+			background:url('layout.png') no-repeat center center;
+		}
+	</style>
+	<script type="text/javascript">
+		$(function(){
+			load1();
+		});
+
+		function load1(){
+			$('#pg').pivotgrid({
+				url:'pivotgrid_data1.json',
+				method:'get',
+				pivot:{
+					rows:['Country','Category'],
+					columns:['Color'],
+					values:[
+						{field:'Price',op:'sum'},
+						{field:'Discount',op:'sum'}
+					]
+				},
+				valuePrecision:0,
+				valueStyler:function(value,row,index){
+					if (/Discount$/.test(this.field) && value>100 && value<500){
+						return 'background:#D8FFD8'
+					}
+				}
+			})
+		}
+		function load3(){
+			$('#pg').pivotgrid({
+				url:'pivotgrid_data3.json',
+				method:'get',
+				pivot:{
+					rows:['Store','TransDate'],
+					columns:['TransType','id'],
+					values:[
+						{field:'Amount',op:'sum'},
+						//{field:'oil'},
+						//{field:'balance'}
+					]
+				},
+				valuePrecision:3,
+				valueStyler:function(value,row,index){
+					if (/balance$/.test(this.field) && value<0){
+						return 'background:pink'
+					}
+				}
+			})
+		}
+	</script>
+
+      </div>
+      <div class="col-md-4" id="right-side">
+      	<h1>right side</h1>
+
+      	<h2>test</h2>
+          <input type="button" id="submit" value="submit">
+			<div class="row">
+				<script>
+					 $(function() {
+    					$( "#draggable" ).draggable();
+  					});
+				</script>
+          		<div class="col-md-6">     
+  					<input type="checkbox" name="checkbox" id="inlineCheckbox1" value="TransDate"> TransDate <br>
+  					<input type="checkbox" name="checkbox" id="inlineCheckbox2" value="TransType"> TransType <br>
+  					<input type="checkbox" name="checkbox" id="inlineCheckbox3" value="TransSource"> TransSource
+				</div>
+				<div class="col-md-6">
+  					<input type="checkbox" name="checkbox" id="inlineCheckbox4" value="Store"> Store <br>
+  					<input type="checkbox" name="checkbox" id="inlineCheckbox5" value="Amount"> Amount<br>
+  					<input type="checkbox" name="checkbox" id="inlineCheckbox6" value="CustomerName"> CustomerName
+  				</div>
+
+
+
+        </div>
+        <div id="check_get">
+        <p>test
+       	</div> 	
+
+ 
+      </div>
+  </div>
+
+
+
+
+
+
+
+     <!--   
+	<h2>Pivot Grid</h2>
+	<div style="margin-bottom:10px">
+		<a href="javascript:void(0)" class="easyui-menubutton" style="width:70px;height:78px;" data-options="size:'large',iconCls:'icon-load',iconAlign:'top',plain:false,menu:'#mm'">Load</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" style="width:70px;height:78px;" data-options="size:'large',iconCls:'icon-layout',iconAlign:'top',plain:false" onclick="javascript:$('#pg').pivotgrid('layout')">Layout</a>
+	</div>
+	<div id="mm" style="display:none">
+		<div onclick="load1()">Load Data1</div>
+		<div onclick="load3()">Load Data3</div>
+	</div>
+	<table id="pg" style="width:700px;height:300px"></table>
+	<style type="text/css">
+		.icon-load{
+			background:url('load.png') no-repeat center center;
+		}
+		.icon-layout{
+			background:url('layout.png') no-repeat center center;
+		}
+	</style>
+	<script type="text/javascript">
+		$(function(){
+			load1();
+		});
+
+		function load1(){
+			$('#pg').pivotgrid({
+				url:'pivotgrid_data1.json',
+				method:'get',
+				pivot:{
+					rows:['Country','Category'],
+					columns:['Color'],
+					values:[
+						{field:'Price',op:'sum'},
+						{field:'Discount',op:'sum'}
+					]
+				},
+				valuePrecision:0,
+				valueStyler:function(value,row,index){
+					if (/Discount$/.test(this.field) && value>100 && value<500){
+						return 'background:#D8FFD8'
+					}
+				}
+			})
+		}
+		function load3(){
+			$('#pg').pivotgrid({
+				url:'pivotgrid_data3.json',
+				method:'get',
+				pivot:{
+					rows:['Store','TransDate'],
+					columns:['TransType','id'],
+					values:[
+						{field:'Amount',op:'sum'},
+						//{field:'oil'},
+						//{field:'balance'}
+					]
+				},
+				valuePrecision:3,
+				valueStyler:function(value,row,index){
+					if (/balance$/.test(this.field) && value<0){
+						return 'background:pink'
+					}
+				}
+			})
+		}
+	</script>
+-->
+</body>
+</html>
